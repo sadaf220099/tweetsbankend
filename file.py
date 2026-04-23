@@ -5,36 +5,39 @@ def fetch_tweets(query="#PakPrideFMAsimMunir"):
     url = "https://twitter241.p.rapidapi.com/search"
     querystring = {
         "type": "Latest",
-        "count": "20",
+        "count": 5,
         "query": query
     }
 
     headers = {
         "Content-Type": "application/json",
         "x-rapidapi-host": "twitter241.p.rapidapi.com",
-        "x-rapidapi-key": "91d805eeafmsh58718c243983d79p124e95jsn4276eb5b726c"
+        "x-rapidapi-key": "ba42c00353mshf3613345030074ep199d6djsn3baf12ee526c"
     }
 
     response = requests.get(url, headers=headers, params=querystring)
     data = response.json()
 
-    # print(data)
+    print(data)
 
     tweets = []
     
     # Navigate into the API structure to reach tweets
     try:
         entries = data["result"]["timeline"]["instructions"][0]["entries"]
+        # print(entries)
     except (KeyError, IndexError):
         print("Could not find tweets in response.")
         return []
 
     for entry in entries:
+        # print("sdsdsdsdssdds", entry["content"])
         try:
             result_node = entry["content"]["itemContent"]["tweet_results"]["result"]
+            # print("sdsdsdsdssdds", result_node["core"]["user_results"]["result"]["legacy"]["followers_count"])
             tweet_legacy = result_node["legacy"]
             user_core = result_node["core"]["user_results"]["result"]["core"]
-            
+            followers = result_node["core"]["user_results"]["result"]["legacy"]["followers_count"]
             full_text = tweet_legacy.get("full_text", "")
             media_items = tweet_legacy.get("extended_entities", {}).get("media", [])
             media_urls = [m.get("media_url_https") for m in media_items if m.get("type") == "photo"]
@@ -48,7 +51,8 @@ def fetch_tweets(query="#PakPrideFMAsimMunir"):
                 "comments": tweet_legacy.get("reply_count", 0),
                 "shares": tweet_legacy.get("retweet_count", 0),
                 "tweet_created_at": tweet_legacy.get("created_at", ""),
-                "user_created_at": user_core.get("created_at", "") or result_node.get("core", {}).get("user_results", {}).get("result", {}).get("legacy", {}).get("created_at", "")
+                "user_created_at": user_core.get("created_at", "") or result_node.get("core", {}).get("user_results", {}).get("result", {}).get("legacy", {}).get("created_at", ""),
+                "follower": followers
             })
         except KeyError:
             continue
