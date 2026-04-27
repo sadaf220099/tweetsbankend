@@ -1,6 +1,23 @@
 import requests
 import json
 
+islamabadSectors = [
+  "e-6", "e-7", "e-8", "e-9", "e-10", "e-11",
+  "f-5", "f-6", "f-7", "f-8", "f-9", "f-10", "f-11",
+  "g-5", "g-6", "g-7", "g-8", "g-9", "g-10", "g-11", "g-12", "g-13", "g-14", "g-15",
+  "h-8", "h-9", "h-10", "h-11", "h-12", "h-13",
+  "i-8", "i-9", "i-10", "i-11", "i-12", "i-13", "i-14", "i-15", "i-16",
+  "blue area",
+  "d-12",
+  "b-17", "c-14", "c-15", "c-16", "c-17",
+  "pwd housing society",
+  "park enclave",
+  "dha islamabad (phases 1–6)",
+  "tarnol",
+  "rawat",
+  "noon",
+  "sihala",
+]
 def fetch_tweets(query="#PakPrideFMAsimMunir"):
     url = "https://twitter241.p.rapidapi.com/search"
     querystring = {
@@ -8,7 +25,9 @@ def fetch_tweets(query="#PakPrideFMAsimMunir"):
         "count": 5,
         "query": query
     }
-
+    if query.lower() not in islamabadSectors: 
+        return None
+    
     headers = {
         "Content-Type": "application/json",
         "x-rapidapi-host": "twitter241.p.rapidapi.com",
@@ -22,16 +41,16 @@ def fetch_tweets(query="#PakPrideFMAsimMunir"):
 
     tweets = []
     
-    # Navigate into the API structure to reach tweets
+    
     try:
         entries = data["result"]["timeline"]["instructions"][0]["entries"]
-        # print(entries)
+       
     except (KeyError, IndexError):
         print("Could not find tweets in response.")
         return []
 
     for entry in entries:
-        # print("sdsdsdsdssdds", entry["content"])
+        
         try:
             result_node = entry["content"]["itemContent"]["tweet_results"]["result"]
             # print("sdsdsdsdssdds", result_node["core"]["user_results"]["result"]["legacy"]["followers_count"])

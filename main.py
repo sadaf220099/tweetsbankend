@@ -15,6 +15,10 @@ app.add_middleware(
 @app.get("/tweets")
 def get_tweets_route(query: str = ""):
     tweets = fetch_tweets(query=query)
+    if tweets is None:
+        return {"error": "The entered query is not a place."}
+    if not tweets:
+        return {"error": "No tweets found"}
     return {"tweets": tweets}
 
 @app.get("/trends")
